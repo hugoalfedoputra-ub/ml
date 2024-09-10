@@ -25,12 +25,7 @@ Laporan ini ditulis sesuai dengan urutan kemunculan cuplikan-cuplikan kode pada 
 
 ```py
 # Hyper-parameters
-input_size = 784
-hidden_size = 500
-num_classes = 10
-num_epochs = 5
-batch_size = 100
-learning_rate = 0.001
+input_size = 784; hidden_size = 500; num_classes = 10; num_epochs = 5; batch_size = 100; learning_rate = 0.001
 ```
 
 Cuplikan di atas menunjukkan enam hyper-parameter yang digunakan, yaitu:
@@ -50,9 +45,7 @@ bahwa gambar-gambar pada dataset MNIST memiliki ukuran 28 pixel kali 28 pixel, s
 
 ```py
 print('Train dataset size: ', len(train_dataset))
-print('test dataset size: ', len(test_dataset))
-print('Loaded train size: ', len(train_loader))
-print('Loaded test size: ', len(test_loader))
+...
 
 Train dataset size:  60000
 test dataset size:  10000
@@ -84,15 +77,10 @@ learning_rate = [10e-1, 10e-3, 10e-5, 10e-7]
 class NeuralNet(nn.Module):
     def __init__(self, input_size, hidden_size, num_classes):
         super(NeuralNet, self).__init__()
-        self.fc1 = nn.Linear(input_size, hidden_size)
-        self.relu = nn.ReLU()
-        self.fc2 = nn.Linear(hidden_size, num_classes)
+        ...
 
     def forward(self, x):
-        out = self.fc1(x)
-        out = self.relu(out)
-        out = self.fc2(out)
-        return out
+        ...
 
 model = NeuralNet(input_size, hidden_size, num_classes).to(device)
 ```
