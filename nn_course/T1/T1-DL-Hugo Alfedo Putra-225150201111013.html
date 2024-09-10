@@ -455,6 +455,8 @@ self.fc2 = nn.Linear(hidden_size, num_classes)
 </div></code></pre>
 <p>merupakan arsitektur jaringan <code>NeuralNet</code> yang terdiri dari dua lapisan berupa Fully Connected (FC) layer yang mengapit fungsi aktivasi ReLU (Rectified Linear Unit). FC layer sendiri berarti tiap neuron input memetakan ke tiap output neuron (M:N). Fungsi aktivasi ReLU sendiri didefinisikan:
 $$\text{ReLU}(x)=\max(0,x)=\frac{x+|x|}{2}$$</p>
+<p>Gambar arsitektur jaringan seperti berikut:</p>
+<p><img src="/nn_course/images/T1-DL-B-visualisations.drawio.png" alt="arsitektur jaringan"></p>
 <h1 id="forward-pass">Forward Pass</h1>
 <pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">forward</span><span class="hljs-params">(self, x)</span>:</span>
     out = self.fc1(x)

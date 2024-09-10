@@ -1,18 +1,18 @@
 <table border style="width: 100%">
 	<tr>
-		<td>Nama</td>
+		<td><b>Nama</b></td>
 		<td>Hugo Alfedo Putra</td>
-		<td>NIM</td>
+		<td><b>NIM</b></td>
 		<td>225150201111013</td>
 	</tr>
 	<tr>
-		<td>Kelas</td>
+		<td><b>Kelas</b></td>
 		<td>DL-B</td>
-		<td>Tanggal Tugas</td>
+		<td><b>Tanggal Tugas</b></td>
 		<td>3 September 2024</td>
 	</tr>
 	<tr>
-		<td colspan=2>Judul Tugas</td>
+		<td colspan=2><b>Judul Tugas</b></td>
 		<td colspan=2>Backpropagation Menggunakan PyTorch</td>
 	</tr>
 </table>
@@ -107,6 +107,10 @@ self.fc2 = nn.Linear(hidden_size, num_classes)
 
 merupakan arsitektur jaringan `NeuralNet` yang terdiri dari dua lapisan berupa Fully Connected (FC) layer yang mengapit fungsi aktivasi ReLU (Rectified Linear Unit). FC layer sendiri berarti tiap neuron input memetakan ke tiap output neuron (M:N). Fungsi aktivasi ReLU sendiri didefinisikan:
 $$\text{ReLU}(x)=\max(0,x)=\frac{x+|x|}{2}$$
+
+Gambar arsitektur jaringan seperti berikut:
+
+<img src="T1-DL-B-visualisations.drawio.png" alt="arsitektur jaringan" width="500"/>
 
 # Forward Pass
 
