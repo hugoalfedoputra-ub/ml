@@ -61,11 +61,11 @@ terlihat bahwa `batch_size = 100` berarti akan terdapat (dalam kasus dataset tra
 
 ```py
 # Hyper-parameters
-input_size = 784 // tetap sama
+input_size = 784 # tetap sama
 hidden_size = [400, 500, 600]
 hidden_layers = [1, 2, 3]
-num_classes = 10 // tetap sama
-num_epochs = range(3,9,1) // 3, 4, 5, 6, 7, 8
+num_classes = 10 # tetap sama
+num_epochs = range(3,9,1) # 3, 4, 5, 6, 7, 8
 batch_size = [100, 300, 600]
 learning_rate = [10e-1, 10e-3, 10e-5, 10e-7]
 ```
@@ -93,8 +93,7 @@ self.relu = nn.ReLU()
 self.fc2 = nn.Linear(hidden_size, num_classes)
 ```
 
-merupakan arsitektur jaringan `NeuralNet` yang terdiri dari dua lapisan berupa Fully Connected (FC) layer yang mengapit fungsi aktivasi ReLU (Rectified Linear Unit). FC layer sendiri berarti tiap neuron input memetakan ke tiap output neuron (M:N). Fungsi aktivasi ReLU sendiri didefinisikan:
-$$\text{ReLU}(x)=\max(0,x)=\frac{x+|x|}{2}$$
+merupakan arsitektur jaringan `NeuralNet` yang terdiri dari dua lapisan berupa Fully Connected (FC) layer yang mengapit fungsi aktivasi ReLU (Rectified Linear Unit). FC layer sendiri berarti tiap neuron input memetakan ke tiap output neuron (M:N).
 
 Gambar arsitektur jaringan seperti berikut:
 
@@ -156,7 +155,7 @@ di mana jaringan menggunakan optimasi ADAM (Adaptive Moment Estimation) yang aka
 
 Digunakan fungsi aktivasi lain berupa:
 
--   Untuk hidden layer: LeakyReLU untuk menghindari permasalahan pada ReLU di mana saat weighted sum $\leq$ 0 akan menyebabkan neuron itu mati atau hanya bernilai 0.
+-   Untuk hidden layer: (1) Sigmoid dan (2) LeakyReLU untuk menghindari permasalahan pada ReLU di mana saat weighted sum $\leq$ 0 akan menyebabkan neuron itu mati atau hanya bernilai 0.
 -   Untuk output layer: Softmax untuk menghasilkan distribusi probabilitas sebagai input Cross Entropy Loss.
 
 # Melatih Model
@@ -199,6 +198,12 @@ Epoch [1/5], Step [300/600], Loss: 0.2400
 # Hasil Eksperimen
 
 ## Visualisasi Loss
+
+Berikut adalah visualisasi loss dengan hyper-parameter sesuai dengan [contoh oleh junjey](https://github.com/yunjey/pytorch-tutorial/blob/master/tutorials/01-basics/feedforward_neural_network/main.py)
+
+<img src="loss_default.png">
+
+Terlihat bahwa semakin banyak step yang dilakukan, nilai loss mengecil kemudian mendatar.
 
 ## Akurasi
 
