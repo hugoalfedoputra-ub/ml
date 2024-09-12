@@ -19,56 +19,7 @@
 
 <br>
 
-Laporan ini ditulis sesuai dengan urutan kemunculan cuplikan-cuplikan kode pada [contoh feed-forward neural-network PyTorch oleh junjey](https://github.com/yunjey/pytorch-tutorial/blob/master/tutorials/01-basics/feedforward_neural_network/main.py).
-
-# Pengaturan Hyper-parameter
-
-```py
-# Hyper-parameters
-input_size = 784; hidden_size = 500; num_classes = 10; num_epochs = 5; batch_size = 100; learning_rate = 0.001
-```
-
-Cuplikan di atas menunjukkan enam hyper-parameter yang digunakan, yaitu:
-
-1. `input_size`: banyak neuron input pada jaringan. Perlu diketahui, berdasarkan LeCun pada [situs ini](https://yann.lecun.com/exdb/mnist/):
-
-```
-.... the images were centered in a 28x28 image by computing the center of mass of the pixels, ...
-```
-
-bahwa gambar-gambar pada dataset MNIST memiliki ukuran 28 pixel kali 28 pixel, sehingga tiap neuron input berupa tiap pixel ($28\text{px}\times 28\text{px}=784\text{px}$) pada gambar dari dataset tersebut.
-
-2. `hidden_size`: banyak neuron pada satu lapisan tersembunyi pada jaringan
-3. `num_classes`: banyak kelas kategori yang akan diklasifikasikan oleh jaringan; bernilai 10 karena dataset gambar berupa tiap digit dari 0 hingga 9
-4. `num_epochs`: di mana epoch sendiri berarti satu putaran pada dataset; sehingga `num_epochs` berarti banyak putaran pada dataset yang akan dilakukan saat proses training
-5. `batch_size`: besar sample dari dataset yang akan digunakan dalam satu iterasi dalam satu epoch, di mana dari hasil:
-
-```py
-print('Train dataset size: ', len(train_dataset))
-...
-
-Train dataset size:  60000
-test dataset size:  10000
-Loaded train size:  600
-Loaded test size:  100
-```
-
-terlihat bahwa `batch_size = 100` berarti akan terdapat (dalam kasus dataset training) $60000\div 100 = 600$ iterasi di mana tiap iterasi berisi 100 sample dari dataset.
-
-6. `learning_rate`: seberapa besar (atau jauh) bobot akan berubah setelah jaringan melalui optimasi untuk meminimalisir loss
-
-## Deklarasi Hyper-parameter untuk Eksperimen
-
-```py
-# Hyper-parameters
-input_size = 784 # tetap sama
-hidden_size = [400, 500, 600]
-hidden_layers = [1, 2, 3]
-num_classes = 10 # tetap sama
-num_epochs = range(3,9,1) # 3, 4, 5, 6, 7, 8
-batch_size = [100, 300, 600]
-learning_rate = [10e-1, 10e-3, 10e-5, 10e-7]
-```
+Laporan ini ditulis sesuai dengan urutan kemunculan cuplikan-cuplikan kode pada [contoh feed-forward neural-network PyTorch oleh junjey](https://github.com/yunjey/pytorch-tutorial/blob/master/tutorials/01-basics/feedforward_neural_network/main.py). Kode yang telah dimodifikasi dapat diakses melalui [link Google Colab ini](https://colab.research.google.com/drive/1LkkwxfMdWn76Rrd2Kn8qd2nkNk4X92r0?usp=sharing) atau melalui [Github](https://github.com/hugoalfedoputra-ub/ml/blob/main/nn_course/T1/Tugas_1_PyTorch_Backprop.ipynb).
 
 # Arsitektur Jaringan
 
@@ -99,58 +50,6 @@ Gambar arsitektur jaringan seperti berikut:
 
 <img src="T1-DL-B-visualisations.drawio.png" alt="arsitektur jaringan" width="500"/>
 
-# Forward Pass
-
-```py
-def forward(self, x):
-    out = self.fc1(x)
-    out = self.relu(out)
-    out = self.fc2(out)
-    return out
-```
-
-merupakan fungsi milik kelas `NeuralNet` bernama `forward` yang merupakan forward-pass pada jaringan. Tahapan forward-pass dirincikan:
-
-1. Variabel `out` pertama merupakan weighted sum (matriks $784\times1$) dari FC layer pertama,
-2. Variabel `out` kedua menerapkan fungsi aktivasi ReLU pada tiap baris pada matriks weighted sum, lalu
-3. Variabel `out` terakhir mengembalikan weighted sum (matriks $500\times1$) dari FC layer kedua yang kemudian di-`return`.
-
-Nantinya pada kode, forward pass dilakukan pada
-
-```py
-# Forward pass
-outputs = model(images)
-loss = criterion(outputs, labels)
-```
-
-saat melatih model.
-
-# Instansiasi Jaringan
-
-```
-model = NeuralNet(input_size, hidden_size, num_classes).to(device)
-```
-
-# Penghitungan Loss
-
-Seperti pada
-
-```
-criterion = nn.CrossEntropyLoss()
-```
-
-di mana jaringan menggunakan [Cross Entropy Loss](https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html) yang berfungsi dengan menghitung perbedaan distribusi probabilitas antara model dan prediksinya (Sumber: [Datacamp](https://www.datacamp.com/tutorial/the-cross-entropy-loss-function-in-machine-learning)).
-
-## Optimasi
-
-Seperti pada
-
-```
-optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-```
-
-di mana jaringan menggunakan optimasi ADAM (Adaptive Moment Estimation) yang akan mengatur nilai `learning_rate` secara dinamis agar nilai tersebut mengalami perubahan besar saat di awal dan mengecil (secara eksponensial) di akhir (Sumber: [GeeksForGeeks](https://www.geeksforgeeks.org/adam-optimizer/)).
-
 ## Implementasi Fungsi Aktivasi Lain
 
 Digunakan fungsi aktivasi lain berupa:
@@ -158,53 +57,223 @@ Digunakan fungsi aktivasi lain berupa:
 -   Untuk hidden layer: (1) Sigmoid dan (2) LeakyReLU untuk menghindari permasalahan pada ReLU di mana saat weighted sum $\leq$ 0 akan menyebabkan neuron itu mati atau hanya bernilai 0.
 -   Untuk output layer: Softmax untuk menghasilkan distribusi probabilitas sebagai input Cross Entropy Loss.
 
-# Melatih Model
-
-```py
-# Train the model
-total_step = len(train_loader)
-for epoch in range(num_epochs):
-    for i, (images, labels) in enumerate(train_loader):
-        # Move tensors to the configured device
-        images = images.reshape(-1, 28*28).to(device)
-        labels = labels.to(device)
-        ...
-```
-
-Pada cuplikan di atas terlihat dalam pelatihan model, tiap gambar (dalam kasus ini berupa tensor 2D $28\times28$) diubah menjadi tensor 1D dengan panjang 784 (sama dengan `28*28`) pada `images = images.reshape(-1, 28*28).to(device)` khususnya dengan argumen `-1` pada `reshape(-1, ...`. Tiap label juga diteruskan ke device atau ke jaringan dengan `labels = labels.to(device)`.
-
-# Backward Pass
-
-```py
-# Backward and optimize
-optimizer.zero_grad()
-loss.backward()
-optimizer.step()
-
-if (i+1) % 100 == 0:
-    print ('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
-            .format(epoch+1, num_epochs, i+1, total_step, loss.item()))
-```
-
-Pada cuplikan di atas terlihat optimasi dan backpropagation (backward pass). Mulanya, nilai-nilai gradien dibuat `null` (berdasarkan [docs ini](https://pytorch.org/docs/stable/generated/torch.optim.Optimizer.zero_grad.html)) yang kemudian dihitung loss-nya dan kemudian dilakukan backpropagation dengan `loss.backward()`. Terakhir dilakukan `optimizer.step()` untuk melakukan satu step optimasi (berdasarkan [docs ini](https://pytorch.org/docs/stable/generated/torch.optim.Optimizer.step.html)). Hanya tiap 100 step akan di-print ke console beserta nilai loss-nya sebagaimana terlihat pada
-
-```py
-Epoch [1/5], Step [100/600], Loss: 0.3124
-Epoch [1/5], Step [200/600], Loss: 0.1915
-Epoch [1/5], Step [300/600], Loss: 0.2400
-...
-```
+<br>
 
 # Hasil Eksperimen
 
+## Hasil RandomizedSearch
+
+Dari hasil RandomizedSearch dipilih tiga parameter-parameter terbaik, dirincikan:
+
+<table border>
+    <tr>
+        <td colspan=3><b>Nama Model</b></td>
+    </tr>
+    <tr>
+        <td><b><code>Rank_1</code></b></td>
+        <td><b><code>Rank_2</code></b></td>
+        <td><b><code>Rank_3</code></b></td>
+    </tr>
+    <tr>
+        <td>
+            <code>
+                'batch_size': 600, <br>
+                'lr': 0.01, <br>
+                'max_epochs': 3, <br>
+                'activation': LeakyReLU', <br>
+                'hidden_layers': 2, <br>
+                'hidden_size': 400
+            </code>
+        </td>
+        <td>
+            <code>
+                'batch_size': 600, <br>
+                'lr': 0.01, <br>
+                'max_epochs': 7, <br>
+                'activation': ReLU', <br>
+                'hidden_layers': 1, <br>
+                'hidden_size': 600
+            </code>
+        </td>
+        <td>
+            <code>
+                'batch_size': 100, <br>
+                'lr': 0.001, <br>
+                'max_epochs': 3, <br>
+                'activation': LeakyReLU', <br>
+                'hidden_layers': 2, <br>
+                'hidden_size': 400
+            </code>
+        </td>
+    </tr>
+</table>
+
 ## Visualisasi Loss
 
-Berikut adalah visualisasi loss dengan hyper-parameter sesuai dengan [contoh oleh junjey](https://github.com/yunjey/pytorch-tutorial/blob/master/tutorials/01-basics/feedforward_neural_network/main.py)
+Berikut adalah visualisasi loss dengan hyper-parameter sesuai dengan [contoh oleh junjey](https://github.com/yunjey/pytorch-tutorial/blob/master/tutorials/01-basics/feedforward_neural_network/main.py) atau model `yunjey`:
 
-<img src="loss_default.png">
+<img src="loss_default.png" height=200>
 
-Terlihat bahwa semakin banyak step yang dilakukan, nilai loss mengecil kemudian mendatar.
+Terlihat bahwa semakin banyak step yang dilakukan, nilai loss mengecil kemudian melandai.
+
+Berikut adalah visualisasi loss pada model `Rank_1`, `Rank_2`, dan `Rank_3`:
+
+<img src="hasil_eksperimen_top_3_randsearchcv.png" height=425>
 
 ## Akurasi
 
+Berikut adalah visualisasi akurasi pada model `yunjey` di sisi kiri dan akurasi pada model `Rank_1`, `Rank_2`, dan `Rank_3` di sisi kanan:
+
+<div style="grid-column: 1/2">
+    <img src="visualisasi_akurasi_yunjey_tight.png" height=325>
+    <img src="hasil_eksperimen_top_3_akurasi_tight.png" height=550>
+</div>
+
+<br>
+Berikut adalah tabel akurasi untuk model `Rank_1`, `Rank_2`, dan `Rank_3`:
+
+<table border>
+    <tr>
+        <td colspan=4><b>Akurasi Model</b></td>
+    </tr>
+    <tr>
+        <td><b><code>yunjey</code></b></td>
+        <td><b><code>Rank_1</code></b></td>
+        <td><b><code>Rank_2</code></b></td>
+        <td><b><code>Rank_3</code></b></td>
+    </tr>
+    <tr>
+        <td>97.86%</td>
+        <td>69.75%</td>
+        <td>96.59%</td>
+        <td>86.14%</td>
+    </tr>
+</table>
+
+## Eksperimen Lanjut
+
+Dari visualisasi akurasi, terlihat model `Rank_2` memiliki peningkatan akurasi yang signifikan; berbeda halnya dengan `Rank_3` di mana akurasinya sudah relatif melandai di mana loss-nya pun juga melandai. Hasil tersebut tidak terlihat memiliki potensi karena nilai loss yang sudah melandai dahulu belum tentu akan meningkatkan akurasi (karena dari saat itu model hanya akan belajar terlalu sedikit demi sedikit).
+
+Hasil model `Rank_2`&mdash;yang memiliki konvergensi (dalam kasus ini melandainya loss) yang lebih cepat dibanding `Rank_1`&mdash;memotivasi eksperimen lebih lanjut yaitu dengan meningkatkan `max_epoch` menjadi 5. Pada `Rank_2` pula akan diimplementasikan fungsi aktivasi sigmoid. Terlihat pula `learning_rate` pada `Rank_1` dan `Rank_2` sama, sehingga konvergensi `Rank_1` yang relatif lamban dapat disebabkan oleh tambahan satu hidden layer.
+
+Perlu diketahui model `Rank_1`, `Rank_2`, dan `Rank_3` menggunakan softmax pada neuron output. Hal tersebut memotivasi eksperimen pada model `Rank_2` dengan menerapkan fungsi aktivasi leakyReLU dan sigmoid baik menggunakan softmax maupun tidak.
+
+<table border>
+    <tr>
+        <td colspan=3><b>Model-model modifikasi <code>Rank_2</code></b></td>
+        <td colspan=2><b>Model-model modifikasi <code>Rank_2</code> tanpa softmax</b></td>
+    </tr>
+    <tr>
+        <td><b><code>Rank_2_</code></b></td>
+        <td><b><code>Rank_2_v2</code></b></td>
+        <td><b><code>Rank_2_Sigmoid</code></b></td>
+        <td><b><code>Rank_2_v2_nsm</code></b></td>
+        <td><b><code>Rank_2_Sigmoid_nsm</code></b></td>
+    </tr>
+    <tr>
+        <td>
+            <code>
+                'batch_size': 600, <br>
+                'lr': 0.01, <br>
+                'max_epochs': 7, <br>
+                'activation': ReLU', <br>
+                'hidden_layers': 1, <br>
+                'hidden_size': 600
+            </code>
+        </td>
+        <td>
+            <code>
+                'batch_size': 600, <br>
+                'lr': 0.01, <br>
+                'max_epochs': 7, <br>
+                'activation': LeakyReLU', <br>
+                'hidden_layers': 1, <br>
+                'hidden_size': 600
+            </code>
+        </td>
+        <td>
+            <code>
+                'batch_size': 600, <br>
+                'lr': 0.01, <br>
+                'max_epochs': 7, <br>
+                'activation': Sigmoid', <br>
+                'hidden_layers': 1, <br>
+                'hidden_size': 600
+            </code>
+        </td>
+        <td>
+            <code>
+                'batch_size': 600, <br>
+                'lr': 0.01, <br>
+                'max_epochs': 7, <br>
+                'activation': LeakyReLU', <br>
+                'hidden_layers': 1, <br>
+                'hidden_size': 600
+            </code>
+        </td>
+        <td>
+            <code>
+                'batch_size': 600, <br>
+                'lr': 0.01, <br>
+                'max_epochs': 7, <br>
+                'activation': Sigmoid', <br>
+                'hidden_layers': 1, <br>
+                'hidden_size': 600
+            </code>
+        </td>
+    </tr>
+</table>
+
+### Hasil Eksperimen Lanjut
+
+Berikut adalah visualisasi dan tabel akurasi pada model `yunjey`, `Rank_2`, `Rank_2_v2`, `Rank_2_Sigmoid`, `Rank_2_v2_nsm`, dan `Rank_2_Sigmoid_nsm`:
+
+<div style="grid-column: 1/2">
+    <img src="loss_eksperimen_lanjut.png" height=500>
+    <img src="akurasi_eksperimen_lanjut.png" height=500>
+<div>
+
+<br>
+
+<table border>
+    <tr>
+        <td colspan=6><b>Akurasi Model</b></td>
+    </tr>
+    <tr>
+        <td><b><code>yunjey</code></b></td>
+        <td><b><code>Rank_2</code></b></td>
+        <td><b><code>Rank_2_v2</code></b></td>
+        <td><b><code>Rank_2_Sigmoid</code></b></td>
+        <td><b><code>Rank_2_v2_nsm</code></b></td>
+        <td><b><code>Rank_2_v2_sigmoid</code></b></td>
+    </tr>
+    <tr>
+        <td>97.86%</td>
+        <td>87.11%</td>
+        <td>96.32%</td>
+        <td>87.73%</td>
+        <td>96.95%</td>
+        <td>97.33%</td>
+    </tr>
+</table>
+
+Dari hasil-hasil tersebut, terlihat bahwa fungsi aktivasi sigmoid lebih cepat konvergen (loss melandai lebih cepat) dibanding dengan ReLU dan LeakyReLU. Terlihat pula loss melandai relatif cukup lamban apabila tidak menggunakan softmax. Namun, penggunaan LeakyReLU pada `Rank_2_v2` menghasilkan akurasi yang lebih landai atau konsisten dibandingkan dengan sigmoid.
+
+Fluktuasi dalam akurasi pada `Rank_2_Sigmoid` dapat disebabkan oleh vanishing gradient problem (VGP) di mana nilai-nilai gradien yang dihasilkan mendekati nol (sangat kecil seakan-akan menghilang). Namun, fluktuasi tersebut hilang atau distabilkan dengan tidak menggunakan softmax seperti pada `Rank_2_Sigmoid_nsm`. Hal tersebut menunjukkan penggunaan softmax pula dapat memperparah VGP karena sejatinya softmax akan bergradien kecil saat nilai $x$ besar (arah positif dan negatif).
+
 ## Konvergensi Model
+
+Konvergensi model dapat berupa melandainya loss:
+
+1. Pada [contoh oleh junjey](https://github.com/yunjey/pytorch-tutorial/blob/master/tutorials/01-basics/feedforward_neural_network/main.py) tampak setelah 2000 step.
+2. Pada `Rank_1` terlihat loss menurun cukup lamban dan akhirnya konvergen menjelang step-step terakhir
+3. Pada `Rank_2` terlihat loss menurun tajam dan relatif melandai di paling akhir
+4. Pada `Rank_3` terlihat loss menurun tajam sama halnya dengan `Rank_2` lalu melandai saat `num_epoch` tercapai
+5. Pada `Rank_2_v2` mirip dengan `Rank_2`
+6. Pada `Rank_2_Sigmoid` terlihat loss menurun tajam dan bahkan lebih cepat daripada `Rank_2` dan `Rank_2_v2`
+7. Pada `Rank_2_v2_nsm` loss menurun cukup lamban; tetapi masih lebih lamban daripada `Rank_1`
+8. Pada `Rank_2_Sigmoid_nsm` loss menurun relatif lebih cepat dibanding dengan `Rank_2_v2_nsm`; tetapi masih lebih lamban daripada `Rank_1`
+
+# Kesimpulan
+
+Neural network menerapkan forward pass, backward pass, dan optimasi untuk memperbarui nilai-nilai bobot dan bias. Pada dataset MNIST, sebuah neural network memprediksi digit dari gambar. Hasil-hasil latihan memperlihatkan bahwa parameter pada model `yunjey` memberikan hasil yang lebih akurat dibanding model-model eksperimen lainnya. Parameter-parameter yang berbeda pula tentu memberikan pengaruh terhadap konvergensi dan akurasi model. Terdapat parameter yang memberikan konvergensi yang relatif lamban seperti pada `Rank_1` dan juga relatif cepat seperti pada `Rank_2`, `Rank_2_Sigmoid`, `Rank_3`, dan juga `yunjey`. Selain itu, penggunaan fungsi aktivasi juga memainkan peran penting dalam kecepatan konvergensi dan kapan model dapat memprediksi hasil-hasil yang akurat.
